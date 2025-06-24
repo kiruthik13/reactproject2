@@ -22,6 +22,7 @@
   width: 100%;
   padding: 1rem 2rem;
   position: relative;
+  /* Ensure no global centering affects this flex layout */
 }
 
 .logo {
@@ -247,4 +248,12 @@ body {
   body {
     padding-top: 70px;
   }
+}
+
+/* Utility class for main content alignment below navbar */
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  /* Add more styles as needed for your main content */
 }

@@ -18,6 +18,9 @@ import Form from './hooks/Form';
 import Effect from './hooks/Effect';
 import Reducer from './hooks/Reducer'; // Optional: useReducer demo
 
+// Dashboard
+import Dashboard from './components/Dashboard';
+
 function App() {
   return (
     <>
@@ -32,6 +35,7 @@ function App() {
         <Route path='/form' element={<Form />} />
         <Route path='/state' element={<State />} />
         <Route path='/reducer' element={<Reducer />} /> {/* Optional route */}
+        <Route path='/dashboard' element={<Dashboard />} />
       </Routes>
 
       {/* Static welcome and skills content */}

@@ -5,29 +5,59 @@ import cors from 'cors';
 
 const app = express();
 
+// Enhanced CORS configuration
+app.use(cors({
+    origin: '*', // Allow all origins for testing
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    credentials: true
+}));
+
 // Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Request logging middleware
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    if (req.method === 'POST' || req.method === 'PUT') {
+        console.log('Request Body:', req.body);
+    }
+    next();
+});
 
 connectDB();
 
 // Basic CRUD operations for users
 app.get('/api/users', async (req, res) => {
     try {
+        console.log('GET /api/users - Fetching all users');
         const users = await User.find();
+        console.log(`Found ${users.length} users`);
         res.json(users);
     } catch (error) {
+        console.error('Error fetching users:', error);
         res.status(500).json({ message: error.message });
     }
 });
 
 app.post('/api/users', async (req, res) => {
     try {
+        console.log('POST /api/users - Received user data:', req.body);
+        
+        // Validate required fields
+        if (!req.body.name || !req.body.email || !req.body.age) {
+            return res.status(400).json({ 
+                message: 'Missing required fields: name, email, and age are required' 
+            });
+        }
+
         const user = new User(req.body);
         const savedUser = await user.save();
+        console.log('User saved successfully:', savedUser);
         res.status(201).json(savedUser);
     } catch (error) {
+        console.error('Error saving user:', error);
         res.status(400).json({ message: error.message });
     }
 });

@@ -2,12 +2,16 @@ import express from 'express';
 import { connectDB } from './config/db.js';
 import User from './model/user.js';
 import cors from 'cors';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
 
 // Enhanced CORS configuration
 app.use(cors({
-    origin: '*', // Allow all origins for testing
+    origin: process.env.CORS_ORIGIN || '*', // Allow all origins for testing
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     credentials: true
@@ -19,9 +23,11 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Request logging middleware
 app.use((req, res, next) => {
-    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-    if (req.method === 'POST' || req.method === 'PUT') {
-        console.log('Request Body:', req.body);
+    if (process.env.LOG_LEVEL === 'debug') {
+        console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+        if (req.method === 'POST' || req.method === 'PUT') {
+            console.log('Request Body:', req.body);
+        }
     }
     next();
 });
@@ -127,4 +133,5 @@ app.get('/api/health', (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port http://localhost:${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
